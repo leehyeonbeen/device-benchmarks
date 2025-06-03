@@ -112,6 +112,7 @@ Here's a summary of the data I have collected for different devices
 | Nvidia L4 | GPU | 12 | 65 | 66 | NA | 235 |
 | Nvidia V100 32GB | GPU | 13 | 84 | 9.4 | NA  | 766 |
 | Nvidia A10 24GB | GPU | 14 | 54 | 56 | NA | 469 |
+| Nvidia RTX 4000 Ada 20GB | GPU | 16 | 78 | 79 | NA | 300 |
 | Nvidia A100 80GB | GPU | 19 | 189 | 237 | NA | 1490 |
 | Nvidia H100-PCIe 80GB | GPU | 38 | 435 | 449 | NA  | 1630 |
 | Nvidia 1050 Ti Mobile | GPU | 1.8 |1.5  | 1 | NA | 97 |
