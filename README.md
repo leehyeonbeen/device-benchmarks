@@ -90,7 +90,7 @@ Here's a summary of the data I have collected for different devices
 | AMD Ryzen 9 5900X | CPU | 1.3 |  |  |  | 29 |
 | AMD Ryzen 9 7950X | CPU | 1.1 |  |  |  | 28 |
 | AMD Ryzen Threadripper 3960X 24-Cores | CPU | 1.4 |  |  |  | 44 |
-| AMD Ryzen Threadripper PRO 5975WX 32-Cores | CPU | 1.5 |  |  |  | 28 |
+| AMD Ryzen Threadripper PRO 5975WX | CPU | 2.16 |  |  |  | 62 |
 | AMD Epyc 7763 Engineering Sample | CPU | 3.2 |  |  |  | 115 |
 | AMD Epyc 7262 | CPU | 0.5 |  |  |  | 80 |
 | Intel i5-12400 | CPU | 0.7 |  | 0.003 | 0.05 | 26 |
