@@ -3,48 +3,16 @@ import time
 import argparse
 import numpy as np
 
-# The flag below controls whether to allow TF32 on matmul. This flag defaults to False
-# in PyTorch 1.12 and later.
-torch.backends.cuda.matmul.allow_tf32 = True
-torch.backends.cudnn.allow_tf32 = True
 
-# The flag below controls whether to allow TF32 on cuDNN. This flag defaults to True.
-
-
-try:
-    import intel_extension_for_pytorch as ipex
-    from torch import xpu
-except ImportError:
-    pass
-from torch import mps, cuda
-
-
-parser = argparse.ArgumentParser(description="Measure FLOPs and BW.")
-parser.add_argument(
-    "--device", type=str, default="cpu", help="One of cpu | cuda | mps | xpu"
-)
-parser.add_argument(
-    "--num_trails", type=int, default=100, help="Number of trails to get average."
-)
-parser.add_argument(
-    "--dtype",
-    type=str,
-    default="float",
-    help="One of float32|float64|float16|bfloat16|int8|int16|int32|bool",
-)
-parser.add_argument(
-    "--allow_tf32",
-    type=bool,
-    default=True,
-    help="Whether to allow TF32 type optimization (NVIDIA Ampere~ arch.)",
-)
-args = parser.parse_args()
-
-dtype = getattr(torch, args.dtype)
-device = torch.device(args.device)
-num_trails = args.num_trails
-allow_tf32 = args.allow_tf32
-eps = 1e-6
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ("yes", "true", "t", "y", "1"):
+        return True
+    elif v.lower() in ("no", "false", "f", "n", "0"):
+        return False
+    else:
+        raise argparse.ArgumentTypeError("Boolean value expected.")
 
 
 def flops_benchmark(device):
@@ -52,6 +20,7 @@ def flops_benchmark(device):
 
     torch.backends.cuda.matmul.allow_tf32 = allow_tf32
     torch.backends.cudnn.allow_tf32 = allow_tf32
+    print(allow_tf32)
 
     tflops_log = []
     test_range = 2 ** np.arange(11, 13 + eps, 0.25)  # 64~4096
@@ -145,6 +114,41 @@ def memory_bandwidth_benchmark(device):
     )
     return bandwidth
 
+
+try:
+    import intel_extension_for_pytorch as ipex
+    from torch import xpu
+except ImportError:
+    pass
+from torch import mps, cuda
+
+
+parser = argparse.ArgumentParser(description="Measure FLOPs and BW.")
+parser.add_argument(
+    "--device", type=str, default="cpu", help="One of cpu | cuda | mps | xpu"
+)
+parser.add_argument(
+    "--num_trails", type=int, default=100, help="Number of trails to get average."
+)
+parser.add_argument(
+    "--dtype",
+    type=str,
+    default="float",
+    help="One of float32|float64|float16|bfloat16|int8|int16|int32|bool",
+)
+parser.add_argument(
+    "--allow_tf32",
+    type=str2bool,
+    default=True,
+    help="Whether to allow TF32 type optimization (NVIDIA Ampere~ arch.)",
+)
+args = parser.parse_args()
+
+dtype = getattr(torch, args.dtype)
+device = torch.device(args.device)
+num_trails = args.num_trails
+allow_tf32 = args.allow_tf32
+eps = 1e-6
 
 if __name__ == "__main__":
     flops_benchmark(device)
