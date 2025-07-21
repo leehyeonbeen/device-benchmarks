@@ -6,9 +6,10 @@ import numpy as np
 # The flag below controls whether to allow TF32 on matmul. This flag defaults to False
 # in PyTorch 1.12 and later.
 torch.backends.cuda.matmul.allow_tf32 = True
+torch.backends.cudnn.allow_tf32 = True
 
 # The flag below controls whether to allow TF32 on cuDNN. This flag defaults to True.
-torch.backends.cudnn.allow_tf32 = True
+
 
 try:
     import intel_extension_for_pytorch as ipex
@@ -31,16 +32,26 @@ parser.add_argument(
     default="float",
     help="One of float32|float64|float16|bfloat16|int8|int16|int32|bool",
 )
+parser.add_argument(
+    "--allow_tf32",
+    type=bool,
+    default=True,
+    help="Whether to allow TF32 type optimization (NVIDIA Ampere~ arch.)",
+)
 args = parser.parse_args()
 
 dtype = getattr(torch, args.dtype)
 device = torch.device(args.device)
 num_trails = args.num_trails
+allow_tf32 = args.allow_tf32
 eps = 1e-6
 
 
 def flops_benchmark(device):
     print(f'Device "{device}" {dtype} matmul compute benchmark: ')
+
+    torch.backends.cuda.matmul.allow_tf32 = allow_tf32
+    torch.backends.cudnn.allow_tf32 = allow_tf32
 
     tflops_log = []
     test_range = 2 ** np.arange(11, 13 + eps, 0.25)  # 64~4096
@@ -86,6 +97,9 @@ def synchronize(device):
 
 def memory_bandwidth_benchmark(device):
     print(f'Device "{device}" memory bandwidth benchmark: ')
+
+    torch.backends.cuda.matmul.allow_tf32 = allow_tf32
+    torch.backends.cudnn.allow_tf32 = allow_tf32
 
     bandwidth_log = []
     test_range = 2 ** (np.arange(24, 30 + eps, 1))
